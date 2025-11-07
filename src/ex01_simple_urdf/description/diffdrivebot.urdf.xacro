@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="robot">
+
+    <!-- Empty link for the map origin -->
+    <link name="map"></link>
+
+    <!-- Position of the base link with respect to the map -->
+    <joint name="base_joint" type="fixed">
+        <origin xyz="1 0 0.09" rpy="0 0 0"/>
+        <parent link="map"/>
+        <child link="base_link"/>
+    </joint>
+
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.4 0.25 0.1"/>
+            </geometry>
+            <material name="red">
+                <color rgba="1 0 0 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.4 0.25 0.1"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="3" />
+            <!-- Common inertia tensors https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors -->
+            <inertia ixx="0.018125" ixy="0.0" ixz="0.0" iyy="0.0425" iyz="0.0" izz="0.055625" />
+        </inertial>
+    </link>
+ 
+    <joint name="wheel_l_joint" type="continuous">
+        <origin xyz="-0.13 0.13 -0.04" rpy="-1.57 0 0"/>
+        <parent link="base_link"/>
+        <child link="wheel_l_link"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="wheel_l_link">
+        <visual>
+            <origin xyz="0 0 0.015" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.05" length="0.03"/>
+            </geometry>
+            <material name="black">
+                <color rgba="0 0 0 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.015" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.05" length="0.03"/>
+            </geometry>
+        </collision>
+    </link>
+ 
+    <joint name="wheel_r_joint" type="continuous">
+        <origin xyz="-0.13 -0.13 -0.04" rpy="1.57 0 0"/>
+        <parent link="base_link"/>
+        <child link="wheel_r_link"/>
+        <axis xyz="0 0 1"/>
+    </joint>
+
+    <link name="wheel_r_link">
+        <visual>
+            <origin xyz="0 0 0.015" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.05" length="0.03"/>
+            </geometry>
+            <material name="black">
+                <color rgba="0 0 0 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0.015" rpy="0 0 0"/>
+            <geometry>
+                <cylinder radius="0.05" length="0.03"/>
+            </geometry>
+        </collision>
+    </link>
+   
+    <joint name="caster_joint" type="fixed">
+        <origin xyz="0.18 0 -0.07" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="caster_link"/>
+    </joint>
+
+    <link name="caster_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.02"/>
+            </geometry>
+            <material name="gray">
+                <color rgba="0.3 0.3 0.3 1"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.02"/>
+            </geometry>
+        </collision>
+    </link>
+</robot>

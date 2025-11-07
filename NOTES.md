@@ -1,0 +1,221 @@
+# LEARNING JOURNAL
+
+This file will contain notes and resources used to build the example packages
+
+## Sourcing
+
+When working with ros2, you have to remember to source your ros version.
+
+This means setting up the necessary environment variables (including PATH) with the following command:
+
+> Replace jazzy with your ros2 version name!
+
+```sh
+source /opt/ros/jazzy/setup.bash
+```
+
+## Workspace
+
+While developing with ROS2, it is common practice to create a workspace folder and a source folder `src` within it.
+
+The code for the packages you develop, will be eack in a subfolder of src.
+
+```none
+myRosDev_ws
+  |
+  |-- src
+  |    |
+  |    |-- package1
+  |    |
+  |    |-- package2
+  |    ...
+  |-- other build artifacts
+  ```
+
+Setup you starting folder structure:
+
+```sh
+mkdir -p ~/myRosDev_ws/src
+```
+
+> NOTE!
+> This is not needed if you are cloning this repo. The cloned repo itself is the workspace.
+
+## Packages
+
+Packages are a collection of your nodes, launchfiles, etc...
+
+### Initialize a package
+
+To first create a package, `cd` into the `src` folder of you workspace and run the `pkg` command.
+
+```sh
+cd ~/myRosDev_ws/src
+ros2 pkg create --build-type ament_python PACKAGE_NAME
+```
+
+Populate the automatically generated `package.xml` and `setup.py` files with your contact info and the package description.
+
+A more complete command is the following:
+
+```sh
+ros2 pkg create --build-type ament_python PACKAGE_NAME --build-type ament_python --license LICENSE --maintainer-email YOUR_EMAIL --description 'PACKAGE_DESCRIPTION'
+```
+
+### Write your robot description
+
+Robot descriptions are written in XML format using URDF files.
+
+These include links and joints, specifying visual geometry, collision boxes and inertial information.
+
+It is possible (and reccomended) to split your descriptions in multiple files and reuse common descriptions (e.g. colors definitions).
+
+arrange your launch files in the `src/PACKAGE_NAME/description` folder
+
+> Common practice is to name the launch files as: `NAME.urdf.xacro`
+
+### Write your launch files
+
+Launch files allow you to automate multiple tasks, for example running multiple nodes.
+
+arrange your launch files in the `src/PACKAGE_NAME/launch` folder
+
+> Common practice is to name the launch files as: `NAME.launch.py`
+
+```sh
+cd ~/myRosDev_ws/src/PACKAGE_NAME
+cd mkdir launch
+touch launch/NAME.launch.py
+touch launch/NAME1.launch.py
+...
+```
+
+To make the launch files available after building your package, you have to specify them in the `setup.py` script located under `src/PACKAGE_NAME`
+
+```python
+from glob import glob
+...
+    data_files=[
+        ...,
+        ('share/' + package_name + '/launch', glob('launch/*.launch.py')),
+        ('share/' + package_name + '/description',
+         glob('description/*.urdf.xacro')),
+    ],
+...
+```
+
+This instructs `colcon` at build time, to copy (or link) any file under `src/PACKAGE_NAME/launch/` matching the pattern `*.launch.py` to the folder `install/PACKAGE_NAME/share/PACKAGE_NAME/launch`
+
+See the code or the resources for some examples on how to write the launch files.
+
+### Build your package
+
+To build our packages, we use `colcon`.
+
+Make sure to add your package dependencies to `package.xml`
+
+From the workspace directory, we can either build all the packages or just one.
+
+All the packages:
+
+```sh
+cd ~/myRosDev_ws
+colcon build --symlink-install
+```
+
+Just one package:
+
+```sh
+cd ~/myRosDev_ws
+colcon build --packages-select PACKAGE_NAME
+```
+
+> Notes:
+>
+> - `--symlink-install` will create symbolic links to source files. If you are having issues running the package after the build, consider adding the `--cmake-clean-cache` flag to make a clean build.
+> - When building for deployment, you want to copy the src files instead of linking them, so use `--merge-install` instead
+
+### Run nodes of yor package
+
+After building your package, you have to source it, then you can run the code it contains!
+
+```sh
+cd ~/myRosDev_ws
+source install/setup.bash
+ros2 launch PACKAGE_NAME LAUNCHFILE.py
+```
+
+## Notes on specific exercises
+
+### 01 simple urdf
+
+Look at the [launch file](src/ex01_simple_urdf/launch/simple_urdf.launch.py) first
+
+In this exercise, we are using the `state_publisher` node of the `state_publisher` package in which we feed our description as a parameter.
+
+It will look for the fixed joints and publish messages about their state.
+
+Similarly, for dynamic joints, we are using `joint_state_publisher_gui` node from the `joint_state_publisher_gui` package, which is also creating topics to control the joints.
+
+This launch file also contains an rviz configuration.
+
+> Note: the parameter fed to the state_publisher node, is the xml content of the descriptor, not its path!
+
+After that, take a look at the [description file](src/ex01_simple_urdf/description/diffdrivebot.urdf.xacro) to see how the links and hoints are configured
+
+#### Link geometry origin
+
+When moving your origin consider that:
+
+- The origin is located at the center of gravity of the geometry
+- When you specify `<origin xyz="...">` offset, these will be the new coordinates of the CoG
+
+#### Joints axis
+
+The joint axis tag defines the axis along which the joints moves. It refers to the axis of the child link.
+
+### 02 URDF xacro
+
+One of the issue with the previous example was the repeating pieces of code, for example the same sizes and origins for geometry and collision tags.
+
+read the [description file](src/ex02_urdf_xacro/description/diffdrivebot.urdf.xacro)
+
+- The file [diffdrivebot_params.xacro](src/ex02_urdf_xacro/description/diffdrivebot_params.xacro) contains a list of properties like mass and size of different links.
+- The file [inertial_calculations.xacro](src/ex02_urdf_xacro/description/inertial_calculations.xacro) contains macros to calculate inertia tensors and fill the `<inertial>` tag.
+- The file [material.xacro](src/ex02_urdf_xacro/description/materials.xacro) contains color definitions.
+
+From there look at the other referenced description files.
+
+Finally, take a look at the [launch file](src/ex02_urdf_xacro/launch/urdf_xacro.launch.py) in which the main xacro file had to be interpreted first and then passed to the `state_publisher`
+
+This launch file also contains an rviz configuration.
+
+### 03 Simple Gazebo
+
+Differences to exercise 02:
+
+#### Descriptors
+
+- Gazebo-specific color definition attached to the links
+- Joint state published by Gazebo and not by the `joint_state_publisher_gui`
+
+These changes are reflected in the [gazebo_config.xacro](src/ex03_simple_gazebo/description/gazebo_config.xacro) file.
+
+#### Launchfiles
+
+The [launch file](src/ex03_simple_gazebo/launch/simple_gazebo.launch.py) includes a gazebo node (through its own [launch file](src/ex03_simple_gazebo/launch/gazebo_launch.launch.py)) and the spawn node.
+
+The gazebo node will launch gazebo with the empty world.
+
+The spawn node takes in the topic to which to subscribe to display the robot states.
+In our case, it is `robot_description` generated by `robot_state_publisher`
+
+## Resources
+
+[@ArticulatedRobotics playlist](https://www.youtube.com/watch?v=2lIV3dRvHmQ&list=PLunhqkrRNRhYYCaSTVP-qJnyUPkTxJnBt&pp=0gcJCbAEOCosWNin) on Youtube.
+
+[ROS2 Documentation - Packages](https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html)
+
+[ROS2 Documentation - Launch Files](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/Launch/Creating-Launch-Files.html)
+
+[ROS2 Documentation - URDF](https://docs.ros.org/en/jazzy/Tutorials/Intermediate/URDF/URDF-Main.html)
