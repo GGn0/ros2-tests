@@ -1,4 +1,5 @@
 from setuptools import find_packages, setup
+from glob import glob
 
 package_name = 'ex04_ros2_control'
 
@@ -10,6 +11,16 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch',
+         glob('bringup/launch/*.launch.py')),
+        ('share/' + package_name + '/config',
+         glob('bringup/config/*.yaml')),
+        ('share/' + package_name + '/description',
+         glob('description/urdf/*.xacro')),
+        ('share/' + package_name + '/description',
+         glob('description/ros2_control/*.xacro')),
+        ('share/' + package_name + '/rviz',
+         glob('description/rviz/*.rviz')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
