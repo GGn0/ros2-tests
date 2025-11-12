@@ -66,10 +66,10 @@
     </link>
  
     <joint name="wheel_r_joint" type="continuous">
-        <origin xyz="0 -${base_depth/2+wheel_height+0.005} 0" rpy="-${pi/2} 0 0"/>
+        <origin xyz="0 -${base_depth/2+wheel_height+0.005} 0" rpy="${pi/2} 0 0"/>
         <parent link="base_link"/>
         <child link="wheel_r_link"/>
-        <axis xyz="0 0 1"/>
+        <axis xyz="0 0 -1"/>
     </joint>
 
     <link name="wheel_r_link">
@@ -93,7 +93,7 @@
    
     <joint name="caster_joint" type="fixed">
         <origin xyz="${base_width - wheel_x_from_back - caster_r} 0 ${-wheel_r + caster_r}" rpy="0 0 0"/>
-        <parent link="base_link"/>
+        <parent link="chassis_link"/>
         <child link="caster_link"/>
     </joint>
 

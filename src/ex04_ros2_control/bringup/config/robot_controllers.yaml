@@ -11,7 +11,6 @@ controller_manager:
 
 diffbot_base_controller:
   ros__parameters:
-    #type: diff_drive_controller/DiffDriveController
 
     left_wheel_names: ["wheel_l_joint"]
     right_wheel_names: ["wheel_r_joint"]

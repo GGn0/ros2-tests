@@ -98,3 +98,9 @@ Run the example with:
 ```sh
 ros2 launch ex04_ros2_control ros2_control.launch.py
 ```
+
+Test the movements with:
+
+```sh
+ros2 topic pub /diffbot_base_controller/cmd_vel geometry_msgs/msg/TwistStamped "{header: {frame_id: 'base_link'}, twist: {linear: {x: 1.6}, angular: {z: 2.4}}}" --rate 10
+```
