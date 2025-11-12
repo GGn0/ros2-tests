@@ -22,7 +22,8 @@ The repo contains multiple example packages:
 - [00_base_comm](#00-base-comm) - A launchfile example using demo publisher/subscriber nodes
 - [01_simple_urdf](#01-simple-urdf) - A URDF robot description example.
 - [02 URDF xacro](#02-urdf-xacro) - A URDF robot description example using xml macros.
-- [03 Simple Gazebo](#03-simple-gazebo) - A robot in a Gazebo world..
+- [03 Simple Gazebo](#03-simple-gazebo) - A robot in a Gazebo world.
+- [04 ROS2 Control](#04-ros2-control) - Example package using ros2 control.
 
 For all the examples, it is assumed you have cloned the repository and you are in the workspace folder!
 
@@ -86,4 +87,14 @@ Run the example with:
 
 ```sh
 ros2 launch ex03_simple_gazebo simple_gazebo.launch.py
+```
+
+### 04 ROS2 control
+
+Example configuration using ROS2 control.
+
+Run the example with:
+
+```sh
+ros2 launch ex04_ros2_control ros2_control.launch.py
 ```

@@ -14,7 +14,7 @@ def generate_launch_description():
 
     # URDF robot description
     # interpret the xacro file
-    # It will run the 'xacro xacro_file' command 
+    # It will run the 'xacro xacro_file' command
     # It will point to the xacro file in the install folder!
     # (be consistent to setup.py)
     robot_description = Command([
