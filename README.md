@@ -24,6 +24,7 @@ The repo contains multiple example packages:
 - [02 URDF xacro](#02-urdf-xacro) - A URDF robot description example using xml macros.
 - [03 Simple Gazebo](#03-simple-gazebo) - A robot in a Gazebo world.
 - [04 ROS2 Control](#04-ros2-control) - Example package using ros2 control.
+- [05 Gazebo ROS2 Control](#05-gazebo-ros2-control) - Example package using ros2 control in a Gazebo world.
 
 For all the examples, it is assumed you have cloned the repository and you are in the workspace folder!
 
@@ -97,6 +98,22 @@ Run the example with:
 
 ```sh
 ros2 launch ex04_ros2_control ros2_control.launch.py
+```
+
+Test the movements with:
+
+```sh
+ros2 topic pub /diffbot_base_controller/cmd_vel geometry_msgs/msg/TwistStamped "{header: {frame_id: 'base_link'}, twist: {linear: {x: 1.6}, angular: {z: 2.4}}}" --rate 10
+```
+
+### 05 Gazebo ROS2 control
+
+Example configuration using ROS2 control.
+
+Run the example with:
+
+```sh
+ros2 launch ex05_gz_control gz_control.launch.py
 ```
 
 Test the movements with:
