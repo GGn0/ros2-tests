@@ -113,11 +113,11 @@ Example configuration using ROS2 control.
 Run the example with:
 
 ```sh
-ros2 launch ex05_gz_control gz_control.launch.py
+ros2 launch ex05_gz_control gazebo.launch.py
 ```
 
 Test the movements with:
 
 ```sh
-ros2 topic pub /diffbot_base_controller/cmd_vel geometry_msgs/msg/TwistStamped "{header: {frame_id: 'base_link'}, twist: {linear: {x: 1.6}, angular: {z: 2.4}}}" --rate 10
+ros2 topic pub /diffbot_base_controller/cmd_vel geometry_msgs/msg/TwistStamped "{header: auto, twist: {linear: {x: 0.70}, angular: {z: 1.4}}}" -1
 ```
