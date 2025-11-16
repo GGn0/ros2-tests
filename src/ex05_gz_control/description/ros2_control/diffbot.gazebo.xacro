@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="diffbot_gazebo">
+        <gazebo>
+            <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="gz_ros2_control-system">
+                <parameters>$(find ex05_gz_control)/config/robot_controllers.yaml</parameters>
+            </plugin>
+   
+        </gazebo>
+    </xacro:macro>
+
+</robot>

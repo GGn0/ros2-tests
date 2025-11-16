@@ -13,4 +13,26 @@
         <color rgba="1 0 0 1"/>
     </material>
 
+    <!-- Gazebo colors -->
+    <gazebo reference="chassis_link">
+        <material>Gazebo/Red</material>
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+    </gazebo>
+    <gazebo reference="wheel_l_link">
+        <material>Gazebo/Black</material>
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+    </gazebo>
+    <gazebo reference="Wheel_r_link">
+        <material>Gazebo/Black</material>
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+    </gazebo>
+    <gazebo reference="caster_link">
+        <material>Gazebo/Grey</material>
+        <mu1>0.0000001</mu1>
+        <mu2>0.0000001</mu2>
+    </gazebo>
+
 </robot>

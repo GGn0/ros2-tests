@@ -21,6 +21,8 @@ setup(
          glob('description/ros2_control/*.xacro')),
         ('share/' + package_name + '/rviz',
          glob('description/rviz/*.rviz')),
+        ('share/' + package_name + '/worlds',
+         glob('worlds/*.sdf')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

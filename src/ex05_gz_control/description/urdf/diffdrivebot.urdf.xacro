@@ -6,7 +6,11 @@
     <xacro:include filename="inertial_calculations.xacro" />
     <xacro:include filename="diffdrivebot_params.xacro" />
     <xacro:include filename="diffbot.ros2_control.xacro" />
+    <xacro:include filename="diffbot.gazebo.xacro" />
+
+    <!-- Load ros2 and gazebo plugins -->
     <xacro:diffbot_ros2_control/>
+    <xacro:diffbot_gazebo/>
 
 
     <!-- Base link -->
@@ -38,12 +42,12 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_box>
     </link>
- 
+    
     <joint name="wheel_l_joint" type="continuous">
-        <origin xyz="0 ${base_depth/2+0.005} 0" rpy="-${pi/2} 0 0"/>
+        <origin xyz="0 ${base_depth/2+wheel_height+0.005} 0" rpy="${pi/2} 0 0"/>
         <parent link="base_link"/>
         <child link="wheel_l_link"/>
-        <axis xyz="0 0 1"/>
+        <axis xyz="0 0 -1"/>
     </joint>
 
     <link name="wheel_l_link">
@@ -66,7 +70,7 @@
     </link>
  
     <joint name="wheel_r_joint" type="continuous">
-        <origin xyz="0 -${base_depth/2+wheel_height+0.005} 0" rpy="${pi/2} 0 0"/>
+        <origin xyz="0 -${base_depth/2+0.005} 0" rpy="${pi/2} 0 0"/>
         <parent link="base_link"/>
         <child link="wheel_r_link"/>
         <axis xyz="0 0 -1"/>

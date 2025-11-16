@@ -22,14 +22,17 @@ The code for the packages you develop, will be eack in a subfolder of src.
 
 ```none
 myRosDev_ws
-  |
-  |-- src
-  |    |
-  |    |-- package1
-  |    |
-  |    |-- package2
-  |    ...
-  |-- other build artifacts
+  │
+  ├─ src
+  │    │
+  │    ├─ package1
+  │    │
+  │    ├─ package2
+  │    ...
+  ├─ other build artifacts
+  .
+  .
+  .
   ```
 
 Setup you starting folder structure:
@@ -221,24 +224,25 @@ The file structure is as follows:
 
 ```none
 src/package_folder
- |
- |- bringup (folder containing configurations)
- |    |
- |    |- config
- |    |    |- robot-controllers.yaml (see [section 04.1](#041-yaml-file))
- |    |
- |    |- launch
- |         |- launchfile.launch.py (launchfile to start all the necessary nodes)
- |
- |- description
- |    |
- |    |- ros2_control
- |    |    |- diffbot.ros2_control.xacro (define the hardware interfaces)
- |    |
- |    |- urdf
- |         |- robot.urdf.xacro
- |         |- ... (other xaxro utilities)
- ...
+ │ └─ bringup (folder containing configurations)
+ │    │
+ │    ├─ config
+ │    │    └──robot-controllers.yaml (see [section 04.1](#041-yaml-file))
+ │    │
+ │    └── launch
+ │         └── launchfile.launch.py (launchfile to start all the necessary nodes)
+ │
+ ├─ description
+ │    │
+ │    ├─ ros2_control
+ │    │    ├─diffbot.ros2_control.xacro (define the hardware interfaces)
+ │    │
+ │    └── urdf
+ │         ├─ robot.urdf.xacro
+ │         └── ... (other xaxro utilities)
+ .
+ .
+ .
 ```
 
 #### 04.1 YAML file
@@ -279,6 +283,49 @@ We also add all the used packages to the dependencies in package.xml
 ### 05 Gazebo ROS control
 
 Differences with exercise 04:
+
+- [05.1](#051-gazebo-launcher) Added a Gazebo specific launch file and removed the old one
+- [05.2](#052-urdf-descriptor) Updated the urdf robot descriptor
+- [05.3](#053-gazebo-world) Added a Gazebo world
+- [05.4](#054-configs) Added/modified yaml configuration files
+
+Updates to package.xml and setup.py
+
+#### 05.1 Gazebo launcher
+
+The main additions are:
+
+- Removed Rviz config and node
+- Load Gazebo world settings
+- Load Gazebo bridge settings
+- Setup Gazebo simulator node
+- Setup Gazebo bridge node
+- Setup robot (entity) spawner node
+- Launch sequence change: Entity spawn -> joint state broadcaster -> controller
+
+> NOTE: the parameter `--controller-manager /controller_manager` has been removed from the controller and joint state broadcaster nodes as it lead to errors.
+
+#### 05.2 URDF descriptor
+
+The main additions are:
+
+- Gazebo materials (colors and friction coefficients) in [materials.xacro](src/ex05_gz_control/description/urdf/materials.xacro)
+- Plugin (ROS2_control) to define the hardware interface using Gazebo engine [diffbot.ros2_control.xacro](src/ex05_gz_control/description/ros2_control/diffbot.ros2_control.xacro)
+- Plugin (Gazebo) to use ros2_control controllers in Gazebo [diffbot.ros2_control.xacro](src/ex05_gz_control/description/ros2_control/diffbot.gazebo.xacro)
+
+> Note: I had to rotate one of the wheels in the robot descriptor because it was wrongly configured
+
+#### 05.3 Gazebo world
+
+An empty world has been added to the new `world` folder. This contains a solid plane to allow the robot to stand on.
+
+#### 05.4 Configs
+
+Added the [gz_bridge.yaml](src/ex05_gz_control/bringup/config/gz_bridge.yaml) configuration file, determining which topics are mapped from ROS2 to Gazebo (and vice versa)
+
+Modified the [robot_controllers.yaml](src/ex05_gz_control/bringup/config/robot_controllers.yaml) configuration file.
+
+Set the joint state broadcaster to use simulation time and set the differential drive controller outside the controller manager.
 
 ## Resources
 

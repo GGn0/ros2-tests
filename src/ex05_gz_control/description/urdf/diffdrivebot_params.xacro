@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
     <!-- Read config YAML -->
-    <xacro:property name="yaml_file" value="$(find ex04_ros2_control)/config/robot_controllers.yaml" />
+    <xacro:property name="yaml_file" value="$(find ex05_gz_control)/config/robot_controllers.yaml" />
     <xacro:property name="dict_base" value="${xacro.load_yaml(yaml_file)}"/>
     <xacro:property name="dict_ctrl" value="${dict_base['diffbot_base_controller']['ros__parameters']}"/>
     <!-- X: distance from back to front -->

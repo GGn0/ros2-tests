@@ -1,5 +1,8 @@
+from os import path
 from launch import LaunchDescription
-from launch.actions import RegisterEventHandler
+from ament_index_python.packages import get_package_share_directory
+from launch.actions import RegisterEventHandler, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import Command, FindExecutable, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -27,8 +30,7 @@ def generate_launch_description():
         ])
     ])
 
-    robot_description_params = {"robot_description": robot_description}  # ,
-    #                           "use_sim_time": True}
+    robot_description_params = {"robot_description": robot_description}
 
     # Controllers
     # Load the controller configurations
@@ -39,40 +41,56 @@ def generate_launch_description():
         controllers_name
     ])
 
-    # RVIZ config file
-    rviz_config = PathJoinSubstitution([
+    # Gazebo world config file
+    world_file = PathJoinSubstitution([
         FindPackageShare(pkg_name),
-        "rviz",
-        "rviz_conf.rviz"
+        "worlds",
+        "empty.sdf"
     ])
+
+    # Gazebo bridge config
+    gz_bridge_params = path.join(
+        get_package_share_directory(pkg_name),
+        'config/gz_bridge.yaml')
 
     #########
     # NODES #
     #########
 
-    # Controller manager
-    control_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        output="both",
-        parameters=[robot_description_params, robot_controllers]
+    # Start Gazebo
+    gz_sim_launchfile = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare("ros_gz_sim"),
+                "launch",
+                "gz_sim.launch.py"
+                ])
+        ]),
+        launch_arguments={
+            'gz_args': ['-r -v4 ', world_file],
+            'on_exit_shutdown': 'true',
+        }.items()
+    )
+
+    # Gazebo bridge
+    ros_gz_bridge_node = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        # arguments=["/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock"],
+        output="screen",
+        arguments=[
+            '--ros-args',
+            '-p',
+            f'config_file:={gz_bridge_params}',
+        ]
     )
 
     # State publisher node
     robot_state_pub_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        output='both',
+        output='screen',
         parameters=[robot_description_params]
-    )
-
-    # RviZ node
-    rviz_node = Node(
-        package="rviz2",
-        executable="rviz2",
-        name="rviz2",
-        output="log",
-        arguments=["-d", rviz_config]
     )
 
     ############
@@ -85,17 +103,15 @@ def generate_launch_description():
     # on exit of x_node_spawner we launch y_node_spawner
 
     # The sequence we want to attain is:
+    # Gazebo sim -> joint state broadcaster
     # joint_state_broadcaster -> robot_controller
-    # joint_state_broadcaster -> RVIz
 
     # Joint state broadcast spawner
     joint_state_br_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=[
-            "joint_state_broadcaster",
-            "--controller-manager",
-            "/controller_manager"
+            "joint_state_broadcaster"
         ]
     )
 
@@ -105,26 +121,31 @@ def generate_launch_description():
         executable="spawner",
         arguments=[
             "diffbot_base_controller",
-            "--controller-manager",
-            "/controller_manager"
+            "--param-file", robot_controllers
         ]
     )
-    #         "--param-file",
-    #         yaml_file,
-    #         "--controller-ros-args",
-    #         "-r /diffbot_base_controller/cmd_vel:=/cmd_vel",
-    #     ],
-    # )
+
+    # Spawn robot in Gazebo Harmonic
+    robot_spawner = Node(
+        package="ros_gz_sim",
+        executable="create",
+        output="screen",
+        arguments=[
+            "-topic", "/robot_description",
+            "-name", "robot",
+            "-z", "0.2"
+        ],
+    )
 
     #############
     # SEQUENCES #
     #############
 
-    # Rviz sequence
-    seq_rviz_after_joint_st_br = RegisterEventHandler(
+    # Joint state broadcaster sequence
+    seq_joint_st_br_after_gz = RegisterEventHandler(
         event_handler=OnProcessExit(
-            target_action=joint_state_br_spawner,
-            on_exit=[rviz_node]
+            target_action=robot_spawner,
+            on_exit=[joint_state_br_spawner]
         )
     )
 
@@ -138,9 +159,10 @@ def generate_launch_description():
 
     # Run the nodes
     return LaunchDescription([
-        control_node,
+        gz_sim_launchfile,
+        ros_gz_bridge_node,
+        robot_spawner,
         robot_state_pub_node,
-        joint_state_br_spawner,
+        seq_joint_st_br_after_gz,
         seq_robot_controller_after_joint_st_br,
-        seq_rviz_after_joint_st_br
     ])
