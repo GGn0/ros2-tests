@@ -33,13 +33,13 @@
             <material name="red" />
         </visual>
         <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="${base_width/2 - wheel_x_from_back} 0 ${base_height/2-wheel_z_from_base}" rpy="0 0 0"/>
             <geometry>
                 <box size="${base_width} ${base_depth} ${base_height}"/>
             </geometry>
         </collision>
         <xacro:inertial_box mass="${base_mass}" x="${base_width}" y="${base_depth}" z="${base_height}">
-            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <origin xyz="${base_width/2 - wheel_x_from_back} 0 ${base_height/2-wheel_z_from_base}" rpy="0 0 0"/>
         </xacro:inertial_box>
     </link>
     
