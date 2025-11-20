@@ -71,7 +71,7 @@ Robot descriptions are written in XML format using URDF files.
 
 These include links and joints, specifying visual geometry, collision boxes and inertial information.
 
-It is possible (and reccomended) to split your descriptions in multiple files and reuse common descriptions (e.g. colors definitions).
+It is possible (and recommended) to split your descriptions in multiple files and reuse common descriptions (e.g. colors definitions).
 
 arrange your launch files in the `src/PACKAGE_NAME/description` folder
 
