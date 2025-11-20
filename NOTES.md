@@ -18,7 +18,7 @@ source /opt/ros/jazzy/setup.bash
 
 While developing with ROS2, it is common practice to create a workspace folder and a source folder `src` within it.
 
-The code for the packages you develop, will be eack in a subfolder of src.
+The code for the packages you develop, will be each in a subfolder of src.
 
 ```none
 myRosDev_ws
@@ -71,7 +71,7 @@ Robot descriptions are written in XML format using URDF files.
 
 These include links and joints, specifying visual geometry, collision boxes and inertial information.
 
-It is possible (and reccomended) to split your descriptions in multiple files and reuse common descriptions (e.g. colors definitions).
+It is possible (and recommended) to split your descriptions in multiple files and reuse common descriptions (e.g. colors definitions).
 
 arrange your launch files in the `src/PACKAGE_NAME/description` folder
 

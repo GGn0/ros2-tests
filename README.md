@@ -4,7 +4,7 @@ A workspace collecting some packages to learn ros2 functionalities
 
 The file [NOTES.md](NOTES.md) contains a journal of the things I learned building this repo, together with links to the used resources.
 
-The repo was build on Ubuntu 24.04
+The repository was built on Ubuntu 24.04
 
 ## Dependencies
 
