@@ -18,7 +18,7 @@ source /opt/ros/jazzy/setup.bash
 
 While developing with ROS2, it is common practice to create a workspace folder and a source folder `src` within it.
 
-The code for the packages you develop, will be eack in a subfolder of src.
+The code for the packages you develop, will be each in a subfolder of src.
 
 ```none
 myRosDev_ws
